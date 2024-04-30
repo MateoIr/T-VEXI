@@ -1,0 +1,57 @@
+.buttomGradient {
+  position: fixed;
+  bottom: -30vh;
+  height: 60vh;
+  width: 100vw;
+  transform: skewY(-10deg);
+  border-top-left-radius: 10vh;
+  border-top-right-radius: 15vh;
+  background: rgb(115, 90, 251);
+  background: linear-gradient(
+    45deg,
+    rgba(115, 90, 251, 1) 0%,
+    rgba(246, 95, 167, 1) 100%
+  );
+  z-index: -1;
+}
+
+.dysplayContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  margin: 10px;
+  width: 400px;
+  height: auto;
+  border-radius: 10px;
+  background-color: #ffffff;
+  text-align: center;
+  padding: 20px;
+  color: black;
+}
+.textInput {
+  text-align: left;
+  width: 100%;
+  padding-top: 13px;
+  padding-bottom: 7px;
+}
+
+.linkStyle {
+  text-decoration: none;
+  font-size: 11px;
+  color: #7b68ee;
+}
+
+.logIn {
+  height: 45px;
+  width: 100%;
+  background-color: #7b68ee;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 8px;
+  text-transform: none;
+}
