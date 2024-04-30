@@ -23,9 +23,9 @@
 }
 
 .container {
-  margin: 10px;
-  width: 400px;
+  width: 400;
   height: auto;
+  margin: 10px;
   border-radius: 10px;
   background-color: #ffffff;
   text-align: center;
@@ -35,7 +35,7 @@
 .textInput {
   text-align: left;
   width: 100%;
-  padding-top: 13px;
+  padding-top: 10px;
   padding-bottom: 7px;
 }
 
@@ -54,4 +54,9 @@
   border: none;
   border-radius: 8px;
   text-transform: none;
+}
+
+.errorText {
+  color: red;
+  margin-top: 2px;
 }

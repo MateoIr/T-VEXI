@@ -1,5 +1,9 @@
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import * as yup from "yup";
+
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 import "./Login.css";
 import {
   Box,
@@ -11,19 +15,40 @@ import {
 } from "@mui/material";
 import google from "/src/imgs/gmail.png";
 const Login = () => {
+  const schema = yup.object().shape({
+    email: yup.string().email("it must be a e-mail").required("insert value"),
+    password: yup
+      .string()
+      .min(4, "It must have 4 characters")
+      .max(20, "It must be less than 20 characters")
+      .required("insert value"),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
   return (
     <>
       <Box className="buttomGradient"></Box>
       <Box className="dysplayContainer">
-        <Grid container className="container">
+        <Grid container className="container" sx={{ width: 400 }}>
           <Typography variant="h4" sx={{ textAlign: "center", width: "100%" }}>
             Welcome back!
           </Typography>
           <Grid item xs={12}>
             <Typography className="textInput">Email</Typography>
             <TextField
+              {...register("email")}
               sx={{ width: "100%" }}
-              id="outlined-error"
+              id="mail"
               placeholder="Enter your email"
               InputProps={{
                 startAdornment: (
@@ -33,10 +58,13 @@ const Login = () => {
                 ),
               }}
             />
+            <p className="errorText">{errors.email?.message}</p>
             <Typography className="textInput">Password</Typography>
             <TextField
+              id="password"
+              type="password"
+              {...register("password")}
               sx={{ width: "100%" }}
-              id="outlined-error"
               placeholder="Enter password"
               InputProps={{
                 startAdornment: (
@@ -53,7 +81,10 @@ const Login = () => {
                 ),
               }}
             />
-            <button className="logIn">Log In</button>
+            <p className="errorText">{errors.password?.message}</p>
+            <button className="logIn" onClick={handleSubmit(onSubmit)}>
+              Log In
+            </button>
             <img src="" alt="" />
             <Button
               sx={{ textTransform: "none", width: "100%" }}
