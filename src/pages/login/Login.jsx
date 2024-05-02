@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import google from "/src/imgs/gmail.png";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const schema = yup.object().shape({
@@ -31,10 +32,9 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-
+  const navigate = useNavigate();
   const onSubmit = (data) => {
-    window.location.href = "/";
-    // ver si es posible con rrd
+    navigate("/home");
   };
   return (
     <>
@@ -85,7 +85,7 @@ const Login = () => {
             <p className="errorText">{errors.password?.message}</p>
 
             <Button
-              className="logIn" // Clase CSS personalizada
+              className="logIn"
               onClick={handleSubmit(onSubmit)}
               variant="contained"
             >
