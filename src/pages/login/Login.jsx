@@ -1,7 +1,6 @@
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import * as yup from "yup";
-
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import "./Login.css";
@@ -14,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import google from "/src/imgs/gmail.png";
+
 const Login = () => {
   const schema = yup.object().shape({
     email: yup.string().email("it must be a e-mail").required("insert value"),
@@ -33,7 +33,8 @@ const Login = () => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    window.location.href = "/";
+    // ver si es posible con rrd
   };
   return (
     <>
@@ -82,10 +83,15 @@ const Login = () => {
               }}
             />
             <p className="errorText">{errors.password?.message}</p>
-            <button className="logIn" onClick={handleSubmit(onSubmit)}>
+
+            <Button
+              className="logIn" // Clase CSS personalizada
+              onClick={handleSubmit(onSubmit)}
+              variant="contained"
+            >
               Log In
-            </button>
-            <img src="" alt="" />
+            </Button>
+
             <Button
               sx={{ textTransform: "none", width: "100%" }}
               variant="outlined"

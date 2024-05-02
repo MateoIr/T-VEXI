@@ -46,14 +46,14 @@
 }
 
 .logIn {
-  height: 45px;
-  width: 100%;
-  background-color: #7b68ee;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 8px;
-  text-transform: none;
+  height: 45px !important;
+  width: 100% !important;
+  background-color: #7b68ee !important;
+  margin-top: 20px !important;
+  margin-bottom: 10px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
 }
 
 .errorText {
