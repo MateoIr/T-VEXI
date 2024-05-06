@@ -2,7 +2,6 @@ import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
 import "./Login.css";
 import {
   Box,
@@ -14,6 +13,9 @@ import {
 } from "@mui/material";
 import google from "/src/imgs/gmail.png";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import { getPosts } from "../../api/users";
 
 const Login = () => {
   const schema = yup.object().shape({
@@ -24,7 +26,6 @@ const Login = () => {
       .max(20, "It must be less than 20 characters")
       .required("insert value"),
   });
-
   const {
     register,
     handleSubmit,
@@ -32,13 +33,42 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const navigate = useNavigate();
-  const onSubmit = (data) => {
-    navigate("/home");
-  };
-  return (
-    <>
-      <Box className="buttomGradient"></Box>
+
+  // const navigate = useNavigate();
+
+  //["users",users.email,users.password]
+  // ["posts", {authorId:1}]
+
+  const postsQuery = useQuery({
+    queryKey: ["posts"],
+    queryFn: getPosts,
+  });
+
+  // const usersQuery = useQuery({
+  //   queryKey: ["users"],
+  //   queryFn: getUsers,
+  // });
+
+  // const onSubmit = (data) => {
+  //   data.preverntDefault();
+  // };
+  if (postsQuery.status === "loading") return <h1>Loading...</h1>;
+  if (postsQuery.status === "error") {
+    return <h1>{JSON.stringify(postsQuery.error)}</h1>;
+  }
+
+  if (postsQuery.status === "success") {
+    return (
+      <>
+        <div>
+          <h1>Posts List 1</h1>
+          <ol>
+            {postsQuery.data.map((post) => (
+              <li key={post.id}>{post.title}</li>
+            ))}
+          </ol>
+        </div>
+        {/* <Box className="buttomGradient"></Box>
       <Box className="dysplayContainer">
         <Grid container className="container" sx={{ width: 400 }}>
           <Typography variant="h4" sx={{ textAlign: "center", width: "100%" }}>
@@ -101,9 +131,10 @@ const Login = () => {
             </Button>
           </Grid>
         </Grid>
-      </Box>
-    </>
-  );
+      </Box> */}
+      </>
+    );
+  }
 };
 
 export default Login;
