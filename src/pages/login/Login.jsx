@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "../../api/users";
+import { useState } from "react";
 
 const Login = () => {
   const schema = yup.object().shape({
@@ -34,41 +35,40 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  // const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const getUserSelected2 = async () => {
+    const response = await fetch(
+      `http://localhost:8000/users?email=${email}&password=${password}`
+    );
+    return response.json();
+  };
 
-  //["users",users.email,users.password]
-  // ["posts", {authorId:1}]
-
-  const postsQuery = useQuery({
-    queryKey: ["posts"],
-    queryFn: getPosts,
+  const usersQuery = useQuery({
+    queryKey: ["users"],
+    queryFn: getUserSelected2(),
   });
 
-  // const usersQuery = useQuery({
-  //   queryKey: ["users"],
-  //   queryFn: getUsers,
-  // });
+  const onSubmit = (data) => {
+    setEmail(data.email);
+    setPassword(data.password);
+    console.log("datos ingresados:", data.email, data.password);
+    console.log("respuesta del fetch:", usersQuery.data);
+  };
 
-  // const onSubmit = (data) => {
-  //   data.preverntDefault();
-  // };
-  if (postsQuery.status === "loading") return <h1>Loading...</h1>;
-  if (postsQuery.status === "error") {
-    return <h1>{JSON.stringify(postsQuery.error)}</h1>;
-  }
-
-  if (postsQuery.status === "success") {
-    return (
-      <>
+  return (
+    <>
+      {usersQuery.status === "success" && (
         <div>
           <h1>Posts List 1</h1>
           <ol>
-            {postsQuery.data.map((post) => (
-              <li key={post.id}>{post.title}</li>
+            {usersQuery.data.map((user) => (
+              <li key={user.id}>{user.email}</li>
             ))}
           </ol>
         </div>
-        {/* <Box className="buttomGradient"></Box>
+      )}
+      <Box className="buttomGradient"></Box>
       <Box className="dysplayContainer">
         <Grid container className="container" sx={{ width: 400 }}>
           <Typography variant="h4" sx={{ textAlign: "center", width: "100%" }}>
@@ -131,10 +131,9 @@ const Login = () => {
             </Button>
           </Grid>
         </Grid>
-      </Box> */}
-      </>
-    );
-  }
+      </Box>
+    </>
+  );
 };
 
 export default Login;
