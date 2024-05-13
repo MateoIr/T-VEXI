@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "../../api/users";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Login = () => {
   const schema = yup.object().shape({
@@ -37,6 +37,8 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
   const getUserSelected2 = async () => {
     const response = await fetch(
       `http://localhost:8000/users?email=${email}&password=${password}`
@@ -45,29 +47,27 @@ const Login = () => {
   };
 
   const usersQuery = useQuery({
-    queryKey: ["users"],
-    queryFn: getUserSelected2(),
+    queryKey: ["users", email, password],
+    queryFn: () => getUserSelected2(email, password),
   });
+
+  useEffect(() => {
+    if (usersQuery.data && usersQuery.data.length > 0) {
+      const user = usersQuery.data[0];
+      if (user.email === email && user.password === password) {
+        navigate("/home");
+      }
+    }
+  }, [usersQuery.data, email, password, navigate]);
 
   const onSubmit = (data) => {
     setEmail(data.email);
     setPassword(data.password);
     console.log("datos ingresados:", data.email, data.password);
-    console.log("respuesta del fetch:", usersQuery.data);
   };
 
   return (
     <>
-      {usersQuery.status === "success" && (
-        <div>
-          <h1>Posts List 1</h1>
-          <ol>
-            {usersQuery.data.map((user) => (
-              <li key={user.id}>{user.email}</li>
-            ))}
-          </ol>
-        </div>
-      )}
       <Box className="buttomGradient"></Box>
       <Box className="dysplayContainer">
         <Grid container className="container" sx={{ width: 400 }}>
