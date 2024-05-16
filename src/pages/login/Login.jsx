@@ -15,8 +15,9 @@ import google from "/src/imgs/gmail.png";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
-import { getPosts } from "../../api/users";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { StoreContext } from "../../store/StoreProvider";
+import { types } from "../../store/StoreReducer";
 
 const Login = () => {
   const schema = yup.object().shape({
@@ -37,9 +38,10 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
   const navigate = useNavigate();
-
-  const getUserSelected2 = async () => {
+  const [store, dispatch] = useContext(StoreContext);
+  const getUserSelected = async () => {
     const response = await fetch(
       `http://localhost:8000/users?email=${email}&password=${password}`
     );
@@ -48,14 +50,47 @@ const Login = () => {
 
   const usersQuery = useQuery({
     queryKey: ["users", email, password],
-    queryFn: () => getUserSelected2(email, password),
+    queryFn: () => getUserSelected(email, password),
   });
+
+  // const [users, setUsers] = useState();
+
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   const controller = new AbortController();
+  //   const refresh = useRefreshToken();
+  //   const getUsers = async () => {
+  //     try {
+  //       const response = await axios.get("/users", {
+  //         signal: controller.signal,
+  //       });
+  //       console.log(response.data);
+  //       isMounted && setUsers(response.data);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+  //   getUsers();
+
+  //   return () => {
+  //     isMounted = false;
+  //     controller.abort();
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (usersQuery.data && usersQuery.data.length > 0) {
       const user = usersQuery.data[0];
       if (user.email === email && user.password === password) {
-        navigate("/home");
+        setToken(user.token);
+        window.localStorage.setItem("token", JSON.stringify(user.token));
+        const loggedUserToken = window.localStorage.getItem("token");
+        console.log("token", loggedUserToken);
+        dispatch({
+          type: types.authLogin,
+          payload: { email: email, token: loggedUserToken },
+        });
+        navigate("/loged");
       }
     }
   }, [usersQuery.data, email, password, navigate]);
