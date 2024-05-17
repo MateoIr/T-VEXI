@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
 import { StoreContext } from "../../store/StoreProvider";
 import { types } from "../../store/StoreReducer";
+import apiClient, { getUserSelected } from "../../api/axios";
 
 const Login = () => {
   const schema = yup.object().shape({
@@ -41,42 +42,11 @@ const Login = () => {
   const [token, setToken] = useState("");
   const navigate = useNavigate();
   const [store, dispatch] = useContext(StoreContext);
-  const getUserSelected = async () => {
-    const response = await fetch(
-      `http://localhost:8000/users?email=${email}&password=${password}`
-    );
-    return response.json();
-  };
 
   const usersQuery = useQuery({
     queryKey: ["users", email, password],
     queryFn: () => getUserSelected(email, password),
   });
-
-  // const [users, setUsers] = useState();
-
-  // useEffect(() => {
-  //   let isMounted = true;
-  //   const controller = new AbortController();
-  //   const refresh = useRefreshToken();
-  //   const getUsers = async () => {
-  //     try {
-  //       const response = await axios.get("/users", {
-  //         signal: controller.signal,
-  //       });
-  //       console.log(response.data);
-  //       isMounted && setUsers(response.data);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   getUsers();
-
-  //   return () => {
-  //     isMounted = false;
-  //     controller.abort();
-  //   };
-  // }, []);
 
   useEffect(() => {
     if (usersQuery.data && usersQuery.data.length > 0) {
