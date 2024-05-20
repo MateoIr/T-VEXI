@@ -12,15 +12,15 @@ import {
   Typography,
 } from "@mui/material";
 import google from "/src/imgs/gmail.png";
-import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
-import { StoreContext } from "../../store/StoreProvider";
-import { types } from "../../store/StoreReducer";
-import apiClient, { getUserSelected } from "../../api/axios";
+import useLogin from "../../hooks/useLogin";
+import { useState } from "react";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { isLoading, user } = useLogin({ email, password });
+
   const schema = yup.object().shape({
     email: yup.string().email("it must be a e-mail").required("insert value"),
     password: yup
@@ -37,38 +37,9 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
-  const navigate = useNavigate();
-  const [store, dispatch] = useContext(StoreContext);
-
-  const usersQuery = useQuery({
-    queryKey: ["users", email, password],
-    queryFn: () => getUserSelected(email, password),
-  });
-
-  useEffect(() => {
-    if (usersQuery.data && usersQuery.data.length > 0) {
-      const user = usersQuery.data[0];
-      if (user.email === email && user.password === password) {
-        setToken(user.token);
-        window.localStorage.setItem("token", JSON.stringify(user.token));
-        const loggedUserToken = window.localStorage.getItem("token");
-        console.log("token", loggedUserToken);
-        dispatch({
-          type: types.authLogin,
-          payload: { email: email, token: loggedUserToken },
-        });
-        navigate("/loged");
-      }
-    }
-  }, [usersQuery.data, email, password, navigate]);
-
-  const onSubmit = (data) => {
-    setEmail(data.email);
-    setPassword(data.password);
-    console.log("datos ingresados:", data.email, data.password);
+  const onSubmit = ({ email, password }) => {
+    setEmail(email);
+    setPassword(password);
   };
 
   return (
@@ -124,9 +95,9 @@ const Login = () => {
               onClick={handleSubmit(onSubmit)}
               variant="contained"
             >
-              Log In
+              {isLoading ? "Loading..." : "Log In"}
             </Button>
-
+            {user && <p className="errorText">no mach</p>}
             <Button
               sx={{ textTransform: "none", width: "100%" }}
               variant="outlined"
