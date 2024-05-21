@@ -1,8 +1,8 @@
+import PropTypes from "prop-types";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
 import "./Login.css";
 import {
   Box,
@@ -13,9 +13,15 @@ import {
   Typography,
 } from "@mui/material";
 import google from "/src/imgs/gmail.png";
-import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import useLogin from "../../hooks/useLogin";
+import { useState } from "react";
 
-const Login = () => {
+const Login = ({ setUser }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { isLoading, user } = useLogin({ email, password, setUser });
+
   const schema = yup.object().shape({
     email: yup.string().email("it must be a e-mail").required("insert value"),
     password: yup
@@ -24,7 +30,6 @@ const Login = () => {
       .max(20, "It must be less than 20 characters")
       .required("insert value"),
   });
-
   const {
     register,
     handleSubmit,
@@ -32,10 +37,12 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const navigate = useNavigate();
-  const onSubmit = (data) => {
-    navigate("/home");
+
+  const onSubmit = ({ email, password }) => {
+    setEmail(email);
+    setPassword(password);
   };
+
   return (
     <>
       <Box className="buttomGradient"></Box>
@@ -89,9 +96,9 @@ const Login = () => {
               onClick={handleSubmit(onSubmit)}
               variant="contained"
             >
-              Log In
+              {isLoading ? "Loading..." : "Log In"}
             </Button>
-
+            {user && <p className="errorText">user or password incorrect!</p>}
             <Button
               sx={{ textTransform: "none", width: "100%" }}
               variant="outlined"
@@ -104,6 +111,10 @@ const Login = () => {
       </Box>
     </>
   );
+};
+
+Login.propTypes = {
+  setUser: PropTypes.func.isRequired,
 };
 
 export default Login;
