@@ -3,26 +3,32 @@ import "./App.css";
 import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import StoreProvider from "./store/StoreProvider";
-import { useEffect, useState } from "react";
+import ProtectedRoute from "./utils/ProtectedRoute";
+import { useLocalStorage } from "react-use";
 
 function App() {
-  const [user, setUser] = useState(window.localStorage.getItem("token"));
+  const [user, setUser] = useLocalStorage("token");
 
-  useEffect(() => {
-    const token = window.localStorage.getItem("token");
-    setUser(token);
-  }, []);
   return (
     <StoreProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="/home" element={<Home />} />
           <Route
-            path="/login"
-            element={user ? <Navigate to="/" /> : <Login />}
-          />
-          <Route path="*" element={<Navigate to="/home" />} />
+            element={
+              <ProtectedRoute canActivate={user} redirectPath="/login" />
+            }
+          >
+            <Route path="/home" element={<Home />} />
+          </Route>
+          <Route
+            element={
+              <ProtectedRoute canActivate={!user} redirectPath="/home" />
+            }
+          >
+            <Route path="/login" element={<Login setUser={setUser} />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
     </StoreProvider>

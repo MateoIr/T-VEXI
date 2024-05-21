@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import * as yup from "yup";
@@ -16,10 +17,10 @@ import { useForm } from "react-hook-form";
 import useLogin from "../../hooks/useLogin";
 import { useState } from "react";
 
-const Login = () => {
+const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { isLoading, user } = useLogin({ email, password });
+  const { isLoading, user } = useLogin({ email, password, setUser });
 
   const schema = yup.object().shape({
     email: yup.string().email("it must be a e-mail").required("insert value"),
@@ -97,7 +98,7 @@ const Login = () => {
             >
               {isLoading ? "Loading..." : "Log In"}
             </Button>
-            {user && <p className="errorText">no mach</p>}
+            {user && <p className="errorText">user or password incorrect!</p>}
             <Button
               sx={{ textTransform: "none", width: "100%" }}
               variant="outlined"
@@ -110,6 +111,10 @@ const Login = () => {
       </Box>
     </>
   );
+};
+
+Login.propTypes = {
+  setUser: PropTypes.func.isRequired,
 };
 
 export default Login;

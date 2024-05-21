@@ -3,7 +3,7 @@ import { getUserSelected } from "../api/axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const useLogin = ({ email, password }) => {
+const useLogin = ({ email, password, setUser }) => {
   const {
     data: user,
     isLoading,
@@ -18,14 +18,14 @@ const useLogin = ({ email, password }) => {
   useEffect(() => {
     if (user && user.length > 0) {
       const { email: emailSelected, password: passwordSelected } = user[0];
+      console.log("User data:", user[0]);
       if (emailSelected === email && passwordSelected === password) {
-        window.localStorage.setItem("token", JSON.stringify(user.token));
         window.localStorage.setItem("user", email);
-        window.localStorage.getItem("token");
+        setUser(user[0].token);
         navigate("/home");
       }
     }
-  }, [user, email, password, navigate]);
+  }, [user, email, password, navigate, setUser]);
 
   return {
     user,
