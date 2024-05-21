@@ -8,8 +8,8 @@ const getUserSelected = async (email, password) => {
   try {
     const response = await apiClient.get("/users", {
       params: {
-        email: email,
-        password: password,
+        email,
+        password,
       },
     });
     return response.data;

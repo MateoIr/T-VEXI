@@ -4,6 +4,7 @@ const ProtectedRoute = ({ canActivate, redirectPath }) => {
   if (!canActivate) {
     return <Navigate to={redirectPath} replace />;
   }
+
   return <Outlet />;
 };
 
