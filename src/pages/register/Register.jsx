@@ -1,9 +1,8 @@
-import PropTypes from "prop-types";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import "./Login.css";
+import "./Register.css";
 import {
   Box,
   Button,
@@ -12,17 +11,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import google from "/src/imgs/gmail.png";
 import { useForm } from "react-hook-form";
-import useLogin from "../../hooks/useLogin";
+import { Link, useNavigate } from "react-router-dom";
+import { useRegister } from "../../hooks/useRegister";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
-const Login = ({ setUser }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { isLoading, user } = useLogin({ email, password, setUser });
-
+const Register = ({ setUser }) => {
   const schema = yup.object().shape({
     email: yup.string().email("it must be a e-mail").required("insert value"),
     password: yup
@@ -30,6 +24,9 @@ const Login = ({ setUser }) => {
       .min(4, "It must have 4 characters")
       .max(20, "It must be less than 20 characters")
       .required("insert value"),
+    ConfirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "The password must be the same"),
   });
   const {
     register,
@@ -38,10 +35,28 @@ const Login = ({ setUser }) => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const [userExist, setUserExist] = useState(null);
+  const { mutate: registerUser } = useRegister();
+  const navigate = useNavigate();
 
-  const onSubmit = ({ email, password }) => {
-    setEmail(email);
-    setPassword(password);
+  const onSubmit = (data) => {
+    const { email, password } = data;
+    const token = Math.floor(100000 + Math.random() * 900000);
+    const user = { email, password, token };
+    registerUser(user, {
+      onSuccess: (data) => {
+        if (data?.error) {
+          setUserExist(data.error);
+        } else {
+          window.localStorage.setItem("token", token);
+          setUser(token);
+          navigate("/home");
+        }
+      },
+      onError: (error) => {
+        console.error("Error registering user:", error);
+      },
+    });
   };
 
   return (
@@ -61,7 +76,7 @@ const Login = ({ setUser }) => {
             variant="h4"
             sx={{ textAlign: "center", width: "100%", fontWeight: 600 }}
           >
-            Welcome back!
+            Get a count!
           </Typography>
           <Grid item xs={12}>
             <Typography className="textInput">Email</Typography>
@@ -92,38 +107,37 @@ const Login = ({ setUser }) => {
                     <LockOutlinedIcon />
                   </InputAdornment>
                 ),
-                endAdornment: (
+              }}
+            />
+            <p className="errorText">{errors.password?.message}</p>
+            <Typography className="textInput">Confirm Password</Typography>
+            <TextField
+              {...register("ConfirmPassword")}
+              sx={{ width: "100%" }}
+              id="ConfirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              InputProps={{
+                startAdornment: (
                   <InputAdornment position="start">
-                    <a href="#" className="linkStyle">
-                      Forgot Password?
-                    </a>
+                    <LockOutlinedIcon />
                   </InputAdornment>
                 ),
               }}
             />
-            <p className="errorText">{errors.password?.message}</p>
-
+            <p className="errorText">{errors.ConfirmPassword?.message}</p>
             <Button
               className="logIn"
               onClick={handleSubmit(onSubmit)}
               variant="contained"
             >
-              {isLoading ? "Loading..." : "Log In"}
+              Register
+              {/* {isLoading ? "Loading..." : "Register"} */}
             </Button>
-            {user && <p className="errorText">user or password incorrect!</p>}
-            <Button
-              sx={{
-                textTransform: "none",
-                width: "100%",
-                marginTop: "-10px",
-                marginBottom: "20px",
-              }}
-              variant="outlined"
-              startIcon={<img src={google} alt="" style={{ width: "20px" }} />}
-            >
-              Sign in with Google
-            </Button>
-            <Link to="/register" style={{ textDecoration: "none" }}>
+            {userExist && (
+              <p className="errorText">You already have a count!</p>
+            )}
+            <Link to="/login" style={{ textDecoration: "none" }}>
               <Typography
                 variant="span"
                 sx={{ textDecoration: "none" }}
@@ -136,7 +150,7 @@ const Login = ({ setUser }) => {
                 sx={{ textDecoration: "underline", paddingLeft: "5px" }}
                 className="textLink"
               >
-                Register
+                Sign in
               </Typography>
             </Link>
           </Grid>
@@ -146,8 +160,4 @@ const Login = ({ setUser }) => {
   );
 };
 
-Login.propTypes = {
-  setUser: PropTypes.func.isRequired,
-};
-
-export default Login;
+export default Register;

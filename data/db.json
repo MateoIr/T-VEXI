@@ -6,6 +6,23 @@
       "password": "12345",
       "token": "ey123345"
     },
-    { "id": "2", "email": "a@a", "password": "12345", "token": "ey999295" }
+    {
+      "id": "2",
+      "email": "a@a",
+      "password": "12345",
+      "token": "ey999295"
+    },
+    {
+      "id": "c826",
+      "email": "mateo.ni.222@hotmail.com",
+      "password": "1234",
+      "token": 710430
+    },
+    {
+      "id": "9bde",
+      "email": "aasda@a",
+      "password": "1234",
+      "token": 114128
+    }
   ]
 }
