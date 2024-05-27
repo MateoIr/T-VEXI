@@ -41,7 +41,7 @@ const CustomSnackBar = ({ error, text }) => {
   );
 };
 CustomSnackBar.propTypes = {
-  error: PropTypes.bool.isRequired,
+  error: PropTypes.bool,
   text: PropTypes.string.isRequired,
 };
 export default CustomSnackBar;

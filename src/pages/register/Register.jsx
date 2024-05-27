@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useRegister } from "../../hooks/useRegister";
+import { useRegisterUser } from "../../hooks/useRegisterUser";
 import { useState } from "react";
 import CustomSnackBar from "../../components/customSnackBar/CustomSnackBar";
 
@@ -38,7 +38,7 @@ const Register = ({ setUser }) => {
     resolver: yupResolver(schema),
   });
   const [userExist, setUserExist] = useState(null);
-  const { isLoading, createUser, error } = useRegister({
+  const { isLoading, createUser, error } = useRegisterUser({
     setUserExist,
     setUser,
   });
@@ -49,7 +49,6 @@ const Register = ({ setUser }) => {
     const user = { email, password, token };
     createUser(user);
   };
-  console.log(error);
 
   return (
     <>

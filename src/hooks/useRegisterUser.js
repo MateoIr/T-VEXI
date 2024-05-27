@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../api/users";
 import { useNavigate } from "react-router-dom";
 
-export const useRegister = ({ setUserExist, setUser }) => {
+export const useRegisterUser = ({ setUserExist, setUser }) => {
   const navigate = useNavigate();
   const {
     isPending: isLoading,

@@ -36,7 +36,7 @@ const registerUser = async ({ email, password, token }) => {
     const userEmails = await getUserEmail(email);
 
     if (userEmails.length === 0) {
-      const response = await axios.post("http://localhost:8000/users", {
+      const response = await apiClient.post("/users", {
         email,
         password,
         token,
