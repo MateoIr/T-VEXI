@@ -54,7 +54,7 @@ const Register = ({ setUser }) => {
   return (
     <>
       <Box className="buttomGradient" />
-      <CustomSnackBar error={error} text="try again later" />
+      <CustomSnackBar error={error} text="Try again later" />
       <Box className="dysplayContainer">
         <Grid
           container
