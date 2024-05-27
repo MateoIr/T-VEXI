@@ -1,20 +1,22 @@
+import PropTypes from "prop-types";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "./Register.css";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
-  Button,
   Grid,
   InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useRegister } from "../../hooks/useRegister";
 import { useState } from "react";
+import CustomSnackBar from "../../components/customSnackBar/CustomSnackBar";
 
 const Register = ({ setUser }) => {
   const schema = yup.object().shape({
@@ -36,32 +38,23 @@ const Register = ({ setUser }) => {
     resolver: yupResolver(schema),
   });
   const [userExist, setUserExist] = useState(null);
-  const { mutate: registerUser } = useRegister();
-  const navigate = useNavigate();
+  const { isLoading, createUser, error } = useRegister({
+    setUserExist,
+    setUser,
+  });
 
   const onSubmit = (data) => {
     const { email, password } = data;
     const token = Math.floor(100000 + Math.random() * 900000);
     const user = { email, password, token };
-    registerUser(user, {
-      onSuccess: (data) => {
-        if (data?.error) {
-          setUserExist(data.error);
-        } else {
-          window.localStorage.setItem("token", token);
-          setUser(token);
-          navigate("/home");
-        }
-      },
-      onError: (error) => {
-        console.error("Error registering user:", error);
-      },
-    });
+    createUser(user);
   };
+  console.log(error);
 
   return (
     <>
-      <Box className="buttomGradient"></Box>
+      <Box className="buttomGradient" />
+      <CustomSnackBar error={error} text="try again later" />
       <Box className="dysplayContainer">
         <Grid
           container
@@ -126,14 +119,15 @@ const Register = ({ setUser }) => {
               }}
             />
             <p className="errorText">{errors.ConfirmPassword?.message}</p>
-            <Button
+            <LoadingButton
               className="logIn"
               onClick={handleSubmit(onSubmit)}
               variant="contained"
+              loading={isLoading}
             >
               Register
-              {/* {isLoading ? "Loading..." : "Register"} */}
-            </Button>
+            </LoadingButton>
+
             {userExist && (
               <p className="errorText">You already have a count!</p>
             )}
@@ -158,6 +152,10 @@ const Register = ({ setUser }) => {
       </Box>
     </>
   );
+};
+
+Register.propTypes = {
+  setUser: PropTypes.func.isRequired,
 };
 
 export default Register;

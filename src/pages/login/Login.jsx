@@ -38,7 +38,6 @@ const Login = ({ setUser }) => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-
   const onSubmit = ({ email, password }) => {
     setEmail(email);
     setPassword(password);
