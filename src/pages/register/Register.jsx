@@ -3,26 +3,22 @@ import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import "./Login.css";
+import "./Register.css";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
-  Button,
   Grid,
   InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
-import google from "/src/imgs/gmail.png";
 import { useForm } from "react-hook-form";
-import useLogin from "../../hooks/useLogin";
-import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useRegisterUser } from "../../hooks/useRegisterUser";
+import { useState } from "react";
+import CustomSnackBar from "../../components/customSnackBar/CustomSnackBar";
 
-const Login = ({ setUser }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { isLoading, user } = useLogin({ email, password, setUser });
-
+const Register = ({ setUser }) => {
   const schema = yup.object().shape({
     email: yup.string().email("it must be a e-mail").required("insert value"),
     password: yup
@@ -30,6 +26,9 @@ const Login = ({ setUser }) => {
       .min(4, "It must have 4 characters")
       .max(20, "It must be less than 20 characters")
       .required("insert value"),
+    ConfirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "The password must be the same"),
   });
   const {
     register,
@@ -38,14 +37,23 @@ const Login = ({ setUser }) => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const onSubmit = ({ email, password }) => {
-    setEmail(email);
-    setPassword(password);
+  const [userExist, setUserExist] = useState(null);
+  const { isLoading, createUser, error } = useRegisterUser({
+    setUserExist,
+    setUser,
+  });
+
+  const onSubmit = (data) => {
+    const { email, password } = data;
+    const token = Math.floor(100000 + Math.random() * 900000);
+    const user = { email, password, token };
+    createUser(user);
   };
 
   return (
     <>
-      <Box className="buttomGradient"></Box>
+      <Box className="buttomGradient" />
+      <CustomSnackBar error={error} text="Try again later" />
       <Box className="dysplayContainer">
         <Grid
           container
@@ -60,7 +68,7 @@ const Login = ({ setUser }) => {
             variant="h4"
             sx={{ textAlign: "center", width: "100%", fontWeight: 600 }}
           >
-            Welcome back!
+            Get a count!
           </Typography>
           <Grid item xs={12}>
             <Typography className="textInput">Email</Typography>
@@ -91,38 +99,38 @@ const Login = ({ setUser }) => {
                     <LockOutlinedIcon />
                   </InputAdornment>
                 ),
-                endAdornment: (
+              }}
+            />
+            <p className="errorText">{errors.password?.message}</p>
+            <Typography className="textInput">Confirm Password</Typography>
+            <TextField
+              {...register("ConfirmPassword")}
+              sx={{ width: "100%" }}
+              id="ConfirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              InputProps={{
+                startAdornment: (
                   <InputAdornment position="start">
-                    <a href="#" className="linkStyle">
-                      Forgot Password?
-                    </a>
+                    <LockOutlinedIcon />
                   </InputAdornment>
                 ),
               }}
             />
-            <p className="errorText">{errors.password?.message}</p>
-
-            <Button
+            <p className="errorText">{errors.ConfirmPassword?.message}</p>
+            <LoadingButton
               className="logIn"
               onClick={handleSubmit(onSubmit)}
               variant="contained"
+              loading={isLoading}
             >
-              {isLoading ? "Loading..." : "Log In"}
-            </Button>
-            {user && <p className="errorText">user or password incorrect!</p>}
-            <Button
-              sx={{
-                textTransform: "none",
-                width: "100%",
-                marginTop: "-10px",
-                marginBottom: "20px",
-              }}
-              variant="outlined"
-              startIcon={<img src={google} alt="" style={{ width: "20px" }} />}
-            >
-              Sign in with Google
-            </Button>
-            <Link to="/register" style={{ textDecoration: "none" }}>
+              Register
+            </LoadingButton>
+
+            {userExist && (
+              <p className="errorText">You already have a count!</p>
+            )}
+            <Link to="/login" style={{ textDecoration: "none" }}>
               <Typography
                 variant="span"
                 sx={{ textDecoration: "none" }}
@@ -135,7 +143,7 @@ const Login = ({ setUser }) => {
                 sx={{ textDecoration: "underline", paddingLeft: "5px" }}
                 className="textLink"
               >
-                Register
+                Sign in
               </Typography>
             </Link>
           </Grid>
@@ -145,8 +153,8 @@ const Login = ({ setUser }) => {
   );
 };
 
-Login.propTypes = {
+Register.propTypes = {
   setUser: PropTypes.func.isRequired,
 };
 
-export default Login;
+export default Register;

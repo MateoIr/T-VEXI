@@ -1,0 +1,79 @@
+.buttomGradient {
+  position: fixed;
+  bottom: -30vh;
+  height: 60vh;
+  width: 100vw;
+  transform: skewY(-10deg);
+  border-top-left-radius: 10vh;
+  border-top-right-radius: 15vh;
+  background: rgb(115, 90, 251);
+  background: linear-gradient(
+    45deg,
+    rgba(115, 90, 251, 1) 0%,
+    rgba(246, 95, 167, 1) 100%
+  );
+  z-index: -1;
+}
+
+.dysplayContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.alertError {
+  position: 'fixed',
+    top: '20px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.error.contrastText,
+    padding: theme.spacing(2),
+    zIndex: 1300, // Make sure it appears above other elements
+  },
+}
+
+.container {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 400;
+  height: auto;
+  margin: 10px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  text-align: center;
+  padding: 20px;
+  color: black;
+}
+.textInput {
+  text-align: left;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 7px;
+}
+
+.linkStyle {
+  text-decoration: none;
+  font-size: 11px;
+  color: #7b68ee;
+}
+
+.logIn {
+  height: 45px !important;
+  width: 100% !important;
+  background-color: #7b68ee !important;
+  margin-top: 20px !important;
+  margin-bottom: 30px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
+}
+
+.errorText {
+  color: red;
+  margin-top: 2px;
+}
+
+.textLink {
+  color: #7b68ee;
+  font-size: 12px !important;
+}

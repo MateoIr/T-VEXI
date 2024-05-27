@@ -5,6 +5,7 @@ import Home from "./pages/home/Home";
 import StoreProvider from "./store/StoreProvider";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import { useLocalStorage } from "react-use";
+import Register from "./pages/register/Register";
 
 function App() {
   const [user, setUser] = useLocalStorage("token");
@@ -26,6 +27,7 @@ function App() {
               <ProtectedRoute canActivate={!user} redirectPath="/home" />
             }
           >
+            <Route path="/register" element={<Register setUser={setUser} />} />
             <Route path="/login" element={<Login setUser={setUser} />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
